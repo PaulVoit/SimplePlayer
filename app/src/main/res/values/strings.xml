@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SimplePlayer</string>
+    <string name="stop_playing">stop</string>
+    <string name="pause_playing">pause</string>
+</resources>

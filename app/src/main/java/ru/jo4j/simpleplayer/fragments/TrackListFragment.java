@@ -9,16 +9,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import ru.jo4j.simpleplayer.R;
+import ru.jo4j.simpleplayer.SpaceItemDecoration;
 import ru.jo4j.simpleplayer.model.IStore;
 import ru.jo4j.simpleplayer.model.Track;
 import ru.jo4j.simpleplayer.model.TrackStore;
@@ -26,10 +30,8 @@ import ru.jo4j.simpleplayer.model.TrackStore;
 public class TrackListFragment extends Fragment {
     private MediaPlayer media;
     private IStore store;
-    private RecyclerView recycler;
-    private TrackListAdapter adapter;
-    private int resumePosition;
     public static final String TRACK = "track";
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,20 +77,31 @@ public class TrackListFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final TrackListAdapter.TrackHolder holder, final int position) {
             final Button button = holder.itemView.findViewById(R.id.name);
+            final ImageView playBtn = holder.itemView.findViewById(R.id.play_button);
+            final ImageView pauseBtn = holder.itemView.findViewById(R.id.pause_button);
             button.setText(tracks.get(position).getName());
-            button.setOnClickListener(new View.OnClickListener() {
+            playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
-                    try {
-                        if (!media.isPlaying()) {
-                            media.start();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (media == null) {
+                        media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
+                    } else if (media.isPlaying()) {
+                        media.reset();
+                        media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
+                    }
+                    media.start();
+
+                }
+            });
+            pauseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (media != null) {
+                        media.pause();
                     }
                 }
             });
+
         }
 
         @Override
@@ -99,29 +112,16 @@ public class TrackListFragment extends Fragment {
 
     public void updateUI(View view) {
         store = new TrackStore();
-        recycler = view.findViewById(R.id.recycler_view);
-        recycler.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        adapter = new TrackListAdapter(store.getTracks());
+        RecyclerView recycler = view.findViewById(R.id.recycler_view);
+        recycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recycler.addItemDecoration(new SpaceItemDecoration(2));
+        TrackListAdapter adapter = new TrackListAdapter(store.getTracks());
         recycler.setAdapter(adapter);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.stop_playing:
-                if (media.isPlaying()) {
-                    media.stop();
-                }
-                return true;
-            case R.id.pause_playing:
-                if (media.isPlaying()) {
-                    media.pause();
-                    resumePosition = media.getCurrentPosition();
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     public static TrackListFragment of(int index) {
@@ -131,6 +131,7 @@ public class TrackListFragment extends Fragment {
         fragment.setArguments(bundle);
         return fragment;
     }
+
 
     @Override
     public void onDestroy() {

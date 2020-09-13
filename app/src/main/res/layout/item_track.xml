@@ -1,20 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/task_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Button
         android:id="@+id/name"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_width="287dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/buttonshape"
-        android:shadowColor="#A8A4A1"
-        android:shadowDx="2"
-        android:shadowDy="2"
-        android:shadowRadius="8"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp" />
+        android:clickable="false"
+        android:shadowColor="#ffffff"
+        android:textColor="#0D001A"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/play_button"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:background="#FBFAFA"
+        app:srcCompat="@android:drawable/ic_media_play"
+        app:tint="#4A4949" />
+
+    <ImageView
+        android:id="@+id/pause_button"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:background="#FBFAFA"
+        android:baselineAlignBottom="false"
+        app:srcCompat="@android:drawable/ic_media_pause"
+        app:tint="#4A4949" />
+
 
 </LinearLayout>

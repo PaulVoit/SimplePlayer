@@ -1,6 +1,8 @@
 package ru.jo4j.simpleplayer.fragments;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import ru.jo4j.simpleplayer.MainActivity;
 import ru.jo4j.simpleplayer.R;
 import ru.jo4j.simpleplayer.SpaceItemDecoration;
 import ru.jo4j.simpleplayer.model.IStore;
@@ -31,6 +34,7 @@ public class TrackListFragment extends Fragment {
     private MediaPlayer media;
     private IStore store;
     public static final String TRACK = "track";
+    private Uri audioUri;
 
 
     @Override
@@ -83,14 +87,26 @@ public class TrackListFragment extends Fragment {
             playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (media == null) {
-                        media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
-                    } else if (media.isPlaying()) {
-                        media.reset();
-                        media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
+                    Intent intent = getActivity().getIntent();
+                    if (intent != null) {
+                        audioUri = intent.getData();
                     }
-                    media.start();
-
+                    try {
+                        if (media != null) {
+                            if (media.isPlaying()) {
+                                media.reset();
+                                media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
+                            }
+                        } else {
+                            media = MediaPlayer.create(getActivity(), store.getTracks().get(position).getTrackId());
+                            if (audioUri != null) {
+                                media = MediaPlayer.create(getActivity(), audioUri);
+                            }
+                        }
+                        media.start();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             pauseBtn.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +116,7 @@ public class TrackListFragment extends Fragment {
                         media.pause();
                     }
                 }
+
             });
 
         }
